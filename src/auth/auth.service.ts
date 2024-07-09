@@ -6,13 +6,17 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt'
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectQueue('mail')
+    private mailQueue: Queue,
     @InjectRepository(Users)
     private usersRepository: Repository<Users>,
-    private jwtService: JwtService
+    private jwtService: JwtService,
   ) {}
   
   async registrate(data: RegistrateAuthDto){
@@ -20,7 +24,9 @@ export class AuthService {
       email: data.email,
       password: bcrypt.hashSync(data.password, 11)
     }))
-    return { id, email }
+    const userData = { id, email }
+    await this.mailQueue.add('verification', userData)
+    return userData
   }
 
   async login(data: LoginAuthDto){

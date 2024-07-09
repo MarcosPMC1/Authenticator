@@ -32,7 +32,7 @@ import { BullModule } from '@nestjs/bull';
         }
       })
     }),
-    AuthModule
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
