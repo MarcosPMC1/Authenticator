@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { RegistrateAuthDto } from './dto/registrate-auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/users.entity';
@@ -6,14 +6,10 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt'
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { JwtService } from '@nestjs/jwt';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bullmq';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectQueue('mail')
-    private mailQueue: Queue,
     @InjectRepository(Users)
     private usersRepository: Repository<Users>,
     private jwtService: JwtService,
@@ -24,9 +20,13 @@ export class AuthService {
       email: data.email,
       password: bcrypt.hashSync(data.password, 11)
     }))
-    const userData = { id, email }
-    await this.mailQueue.add('verification', userData)
-    return userData
+    .catch(err => {
+      if(err.code == '23505'){
+        throw new BadRequestException('User already exists')
+      }
+      throw new InternalServerErrorException()
+    })
+    return { id, email }
   }
 
   async login(data: LoginAuthDto){
@@ -38,7 +38,7 @@ export class AuthService {
     const payload = { sub: user.id, username: user.email }
 
     return {
-      access_token: this.jwtService.signAsync(payload, { algorithm: 'RS256' })
+      access_token: this.jwtService.sign(payload, { algorithm: 'RS256' })
     }
   }
 }
