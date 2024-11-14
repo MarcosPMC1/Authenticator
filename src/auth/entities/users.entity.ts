@@ -11,9 +11,6 @@ export class Users {
     @Column({ type: 'varchar', length: 60 })
     password: string
 
-    @Column({ type: 'boolean', default: false })
-    email_verification: boolean
-
     @CreateDateColumn()
     createdAt: Date
 }

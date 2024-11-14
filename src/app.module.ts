@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -21,16 +20,6 @@ import { BullModule } from '@nestjs/bull';
         synchronize: true,
         logging: true,
       }),
-    }),
-    BullModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        redis: {
-          host: configService.getOrThrow('REDIS_HOST'),
-          port: configService.getOrThrow('REDIS_PORT')
-        }
-      })
     }),
     AuthModule,
   ],
