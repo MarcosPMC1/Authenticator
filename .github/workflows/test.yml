@@ -12,6 +12,7 @@ env:
 
 jobs:
   unit-test:
+    name: Run Test
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
