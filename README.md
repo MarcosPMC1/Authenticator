@@ -30,6 +30,8 @@ Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de
 
 `POSTGRES_PASSWORD`
 
+`POSTGRES_PORT`
+
 
 ## Feedback
 
