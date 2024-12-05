@@ -1,0 +1,24 @@
+name: CI Testing
+
+on:
+  pull_request:
+    types:
+      - open
+    branches:
+      - main
+
+env:
+  IMAGE_TAG: nestjs-api
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      - name: Build the Docker image
+        run: docker build -t $IMAGE_TAG --target=test .
+      
+      - name: Run tests
+        run: docker run $IMAGE_TAG sh -c 'npm run test'
