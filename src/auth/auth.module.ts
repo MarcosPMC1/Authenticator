@@ -5,11 +5,10 @@ import { Users } from './entities/users.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { readFileSync } from 'fs';
-import { join } from 'path';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ Users ]),
+    TypeOrmModule.forFeature([Users]),
     JwtModule.register({
       global: true,
       privateKey: readFileSync('./key').toString(),
