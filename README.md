@@ -8,6 +8,8 @@ Este projeto de API, integra um inteligente sistema de autenticação para seus 
 
 - Autenticação
 - Cadastro
+- Autorização baseada em cargo
+- Controle de usuarios
 
 
 ## Instalação
