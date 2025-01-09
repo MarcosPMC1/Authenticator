@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { Users } from './entities/users.entity';
+import { Users } from '../users/entities/users.entity';
+import { Role } from '../enums/role.enum';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -12,6 +13,9 @@ describe('AuthController', () => {
     email: 'teste@teste.com',
     password: 'hashed',
     createdAt: new Date(),
+    deletedAt: null,
+    role: Role.User,
+    updateAt: new Date()
   };
 
   beforeEach(async () => {

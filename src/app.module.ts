@@ -4,6 +4,11 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './guards/auth.guard';
+import { JwtModule } from '@nestjs/jwt';
+import { readFileSync } from 'fs';
 
 @Module({
   imports: [
@@ -19,9 +24,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         type: 'postgres',
         autoLoadEntities: true,
         logging: true,
+        synchronize: true
       }),
     }),
+    JwtModule.register({
+      global: true,
+      privateKey: readFileSync('/usr/keys/key').toString(),
+      publicKey: readFileSync('/usr/keys/key.pub').toString(),
+      signOptions: {
+        expiresIn: '15m',
+      },
+    }),
     AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
