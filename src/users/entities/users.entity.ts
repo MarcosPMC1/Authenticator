@@ -1,8 +1,11 @@
+import { Role } from '../../enums/role.enum';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('users')
@@ -16,6 +19,15 @@ export class Users {
   @Column({ type: 'varchar', length: 60 })
   password: string;
 
+  @Column({ type: 'enum', enum: Role, default: Role.User })
+  role: Role
+
   @CreateDateColumn()
   createdAt: Date;
+  
+  @DeleteDateColumn()
+  deletedAt: Date;
+
+  @UpdateDateColumn()
+  updateAt: Date;
 }

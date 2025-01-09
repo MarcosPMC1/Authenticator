@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { Repository } from 'typeorm';
-import { Users } from './entities/users.entity';
+import { Users } from '../users/entities/users.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -10,6 +10,7 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Role } from '../enums/role.enum';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -23,6 +24,9 @@ describe('AuthService', () => {
     email: 'teste@teste.com',
     password: 'hashed',
     createdAt: new Date(),
+    deletedAt: null,
+    role: Role.User,
+    updateAt: new Date()
   };
 
   beforeEach(async () => {

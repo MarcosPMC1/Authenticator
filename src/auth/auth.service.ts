@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { RegistrateAuthDto } from './dto/registrate-auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Users } from './entities/users.entity';
+import { Users } from '../users/entities/users.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { LoginAuthDto } from './dto/login-auth.dto';
@@ -45,7 +45,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const payload = { sub: user.id, username: user.email };
+    const payload = { sub: user.id, username: user.email, roles: user.role };
 
     return {
       access_token: this.jwtService.sign(payload, { algorithm: 'RS256' }),
