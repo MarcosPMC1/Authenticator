@@ -33,11 +33,11 @@ jobs:
               with:
                   cosign-release: "v2.2.4"
 
-            - name: Bump version and push tag
-              uses: anothrNick/github-tag-action@v1 # Don't use @master or @v1 unless you're happy to test the latest version
-              env:  
-                GITHUB_TOKEN: ${{ secrets.TOKEN }}
-                WITH_V: true
+            # - name: Bump version and push tag
+            #   uses: anothrNick/github-tag-action@v1 # Don't use @master or @v1 unless you're happy to test the latest version
+            #   env:  
+            #     GITHUB_TOKEN: ${{ secrets.TOKEN }}
+            #     WITH_V: true
 
             # Set up BuildKit Docker container builder to be able to build
             # multi-platform images and export cache
@@ -63,7 +63,7 @@ jobs:
                   images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
                   tags: |
                     # set latest tag for default branch
-                    type=semver, pattern={{version}}
+                    # type=semver, pattern={{version}}
                     type=raw,value=latest,enable={{is_default_branch}}
 
             # Build and push Docker image with Buildx (don't push on PR)
