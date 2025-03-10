@@ -4,7 +4,6 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { RegistrateAuthDto } from './dto/registrate-auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from '../users/entities/users.entity';
 import { Repository } from 'typeorm';
@@ -20,7 +19,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async registrate(data: RegistrateAuthDto) {
+  async registrate(data: LoginAuthDto) {
     const { id, email } = await this.usersRepository
       .save(
         this.usersRepository.create({
