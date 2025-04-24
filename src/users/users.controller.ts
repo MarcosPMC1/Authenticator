@@ -5,7 +5,7 @@ import { Roles } from '../enums/roles.decorator';
 import { Role } from '../enums/role.enum';
 import { RolesGuard } from '../guards/roles.guard';
 import { UserDto } from './dto/user.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -13,7 +13,11 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-
+  @ApiParam({ name: 'id', type: String, description: 'User ID' })
+  @ApiOkResponse({ 
+    description: 'Get one user',
+    type: UserDto
+  })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.Admin)
   @Get()
@@ -21,6 +25,11 @@ export class UsersController {
     return this.usersService.getOne(id)
   }
 
+  @ApiOkResponse({ 
+    description: 'List all users',
+    type: UserDto,
+    isArray: true
+  })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.Admin)
   @Get()
@@ -28,6 +37,10 @@ export class UsersController {
     return this.usersService.list()
   }
 
+  @ApiParam({ name: 'id', type: String, description: 'User ID' })
+  @ApiOkResponse({
+    description: 'Successfully deleted the user',
+  })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.Admin)
   @Delete()
@@ -35,6 +48,10 @@ export class UsersController {
     return this.usersService.delete(id)
   }
 
+  @ApiParam({ name: 'id', type: String, description: 'User ID' })
+  @ApiOkResponse({
+    description: 'Successfully updated the user',
+  })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.Admin)
   @Put()
