@@ -26,7 +26,8 @@ describe('AuthService', () => {
     createdAt: new Date(),
     deletedAt: null,
     role: Role.User,
-    updateAt: new Date()
+    updateAt: new Date(),
+    tenants: [],
   };
 
   beforeEach(async () => {

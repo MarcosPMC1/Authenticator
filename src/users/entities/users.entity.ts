@@ -1,9 +1,11 @@
+import { TenantUsers } from '../../tenant/entity/tenant-users.entity';
 import { Role } from '../../enums/role.enum';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -30,4 +32,7 @@ export class Users {
 
   @UpdateDateColumn()
   updateAt: Date;
+
+  @OneToMany(() => TenantUsers, (tenantUsers) => tenantUsers.user)
+  tenants: TenantUsers[];
 }
