@@ -2,8 +2,8 @@ import { Body, Controller, Delete, Get, Param, Post, UseGuards } from "@nestjs/c
 import { TenantService } from "./tenant.service";
 import { AuthGuard } from "../guards/auth.guard";
 import { RolesGuard } from "../guards/roles.guard";
-import { Role } from "src/enums/role.enum";
-import { Roles } from "src/enums/roles.decorator";
+import { Role } from "../enums/role.enum";
+import { Roles } from "../enums/roles.decorator";
 import { UserTenantDto } from "./dto/user-tenant.dto";
 import { CreateTenantDto } from "./dto/create-tenant.dto";
 

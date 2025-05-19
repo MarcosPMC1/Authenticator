@@ -22,6 +22,15 @@ ENV CI=true
 
 CMD ["npm", "run", "test"]
 
+# Teste E2E
+FROM dev AS test-e2e
+
+COPY test ./
+
+ENV CI=true
+
+CMD ["npx", "jest", "--config", "./test/jest-e2e.json"]
+
 # Produção
 FROM node:lts AS prod
 

@@ -19,7 +19,7 @@ export class TenantService {
   async createTenant(tenantData: CreateTenantDto): Promise<Tenant> {
     const tenant = await this.tenantRepository.save(this.tenantRepository.create(tenantData));
     await this.dataSource.query(`CREATE DATABASE "${tenant.id}"`);
-    return 
+    return tenant;
   }
 
   async getTenantById(id: string): Promise<Tenant> {
