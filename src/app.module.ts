@@ -5,10 +5,9 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './guards/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { readFileSync } from 'fs';
+import { TenantModule } from './tenant/tenant.module';
 
 @Module({
   imports: [
@@ -35,8 +34,12 @@ import { readFileSync } from 'fs';
         expiresIn: '15m',
       },
     }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     AuthModule,
     UsersModule,
+    TenantModule,
   ],
   controllers: [AppController],
   providers: [AppService],

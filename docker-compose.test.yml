@@ -1,13 +1,13 @@
 services:
   auth-api:
-    container_name: "auth-api"
+    container_name: "auth-api-e2e"
     environment:
       - NODE_ENV=${NODE_ENV}
     env_file:
       - .env
     build:
       context: .
-      target: "${NODE_ENV}"
+      target: "test-e2e"
       dockerfile: Dockerfile
     ports:
       - 3000:3000
@@ -16,15 +16,14 @@ services:
       - /usr/src/app/node_modules
       - ./key:/usr/keys/key
       - ./key.pub:/usr/keys/key.pub
-    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
     networks:
-      - auth-network
+      - auth-e2e-network
 
   postgres: 
-    container_name: "auth-postgres"
+    container_name: "auth-postgres-e2e"
     image: postgres:latest
     ports:
       - 5432:5432
@@ -39,7 +38,7 @@ services:
     volumes:
       - auth-postgres-data:/var/lib/postgresql/data
     networks:
-      - auth-network
+      - auth-e2e-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -47,8 +46,8 @@ services:
       retries: 5
   
 networks:
-  auth-network:
-    name: "auth-network"
+  auth-e2e-network:
+    name: "auth-e2e-network"
 
 volumes:
   auth-postgres-data:
