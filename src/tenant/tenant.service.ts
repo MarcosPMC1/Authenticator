@@ -4,7 +4,7 @@ import { DataSource, Repository } from "typeorm";
 import { CreateTenantDto } from "./dto/create-tenant.dto";
 import { TenantUsers } from "./entity/tenant-users.entity";
 import { UserTenantDto } from "./dto/user-tenant.dto";
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 
 @Injectable()
 export class TenantService {
@@ -34,10 +34,14 @@ export class TenantService {
     return this.tenantRepository.find();
   }
 
+  async getTenantbyUser(userId: string): Promise<TenantUsers[]> {
+    return this.tenantUsersRepository.find({ where: { userId } });
+  }
+
   async addUserToTenant(data: UserTenantDto): Promise<TenantUsers> {
     const tenant = await this.getTenantById(data.tenantId);
     if (!tenant) {
-      throw new Error("Tenant not found");
+      throw new NotFoundException("Tenant not found");
     }
     
     return this.tenantUsersRepository.save({

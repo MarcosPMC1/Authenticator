@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
 import { TenantService } from "./tenant.service";
 import { AuthGuard } from "../guards/auth.guard";
 import { RolesGuard } from "../guards/roles.guard";
@@ -13,10 +13,19 @@ export class TenantController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.Admin)
-  @Get()
+  @Get('/list')
   async getTenants() {
     return this.tenantService.getAllTenants();
   }
+
+  @UseGuards(AuthGuard)
+  @Get()
+  async getTenantUsers(@Req() req) {
+    const user = req.user;
+    return this.tenantService.getTenantbyUser(user.id);
+  }
+
+
 
   @UseGuards(AuthGuard)
   @Post('invite')
