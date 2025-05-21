@@ -21,7 +21,7 @@ import {
       try {
         const payload = await this.jwtService.verifyAsync(token);
 
-        request['user'] = payload;
+        request['user'] = { sub: payload.sub, email: payload.email, username: payload.username, roles: payload.roles };
       } catch {
         throw new UnauthorizedException();
       }
