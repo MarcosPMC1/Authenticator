@@ -49,7 +49,7 @@ describe('AuthGuard', () => {
     it('should add the user to the request if the token is valid', async () => {
       const mockRequest = { headers: { authorization: 'Bearer validToken' } } as Request;
       const context = { switchToHttp: () => ({ getRequest: () => mockRequest }) } as ExecutionContext;
-      const mockPayload = { userId: 1, username: 'testUser' };
+      const mockPayload = { sub: 1, username: 'testUser', email: 'test@user.com', roles: ['user'] };
 
       jwtService.verifyAsync = jest.fn().mockResolvedValue(mockPayload);
 

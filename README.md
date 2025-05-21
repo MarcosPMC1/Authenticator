@@ -7,6 +7,11 @@ Este projeto de API, integra um inteligente sistema de autenticação para seus 
 - Autenticação
 - Cadastro
 - Criação de Tenant
+- Refresh Token
+
+## Refresh Token
+
+Ao se autenticar a API irá retornar um access_token e um refresh_token, sendo o access_token utilizado para se autenticar nas rotas porém com válidade de baixo tempo neste projeto 1 hora, já o refresh_token tem válidade de 7 dias e é utilizado para obter novos access_token
 
 ## Técnologia de chaves assimétricas
 Um par de chaves assimétricas é utilizado para autenticação dos usuários ao utilizar este sistema, sendo assim a chave pública pode ser compartilhada com outros serviços com a finalidade de validar a autenticidade daquele token.

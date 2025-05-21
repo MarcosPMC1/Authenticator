@@ -10,4 +10,9 @@ export class RegistrateResponse{
         example: 'email@email.com'
     })
     email: string
+
+    @ApiProperty({
+        example: 'Teste Name'
+    })
+    username: string;
 }

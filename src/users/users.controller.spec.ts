@@ -18,6 +18,7 @@ describe('UsersController', () => {
       role: Role.User,
       updateAt: new Date(),
       tenants: [],
+      username: 'testuser',
     };
 
 
@@ -37,7 +38,8 @@ describe('UsersController', () => {
         {
           provide: JwtService,
           useValue: {
-            
+            sign: jest.fn().mockReturnValue('token'),
+            verify: jest.fn().mockReturnValue({ id: '123' }),
           }
         }
       ],

@@ -19,6 +19,7 @@ describe('UsersService', () => {
     role: Role.User,
     updateAt: new Date(),
     tenants: [],
+    username: 'testuser',
   };
 
   const USER_REPOSITORY_TOKEN = getRepositoryToken(Users);

@@ -2,7 +2,12 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class LoginResponse{
     @ApiProperty({
-        example: 'token'
+        example: 'token',
     })
-    access_token: string
+    access_token: string;
+
+    @ApiProperty({
+        example: 'token',
+    })
+    refresh_token: string;
 }

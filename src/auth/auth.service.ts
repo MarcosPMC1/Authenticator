@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { RegistrateAuthDto } from './dto/registrate-auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -19,12 +20,13 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async registrate(data: LoginAuthDto) {
-    const { id, email } = await this.usersRepository
+  async registrate(data: RegistrateAuthDto) {
+    const { id, email, username } = await this.usersRepository
       .save(
         this.usersRepository.create({
           email: data.email,
           password: bcrypt.hashSync(data.password, 11),
+          username: data.username,
         }),
       )
       .catch((err) => {
@@ -33,7 +35,7 @@ export class AuthService {
         }
         throw new InternalServerErrorException();
       });
-    return { id, email };
+    return { id, email, username };
   }
 
   async login(data: LoginAuthDto) {
@@ -44,10 +46,21 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const payload = { sub: user.id, username: user.email, roles: user.role };
+    const payload = { sub: user.id, email: user.email, username: user.username, roles: user.role };
 
-    return {
-      access_token: this.jwtService.sign(payload, { algorithm: 'RS256' }),
-    };
+    return this.generateTokens(payload);
+  }
+
+  async generateTokens(payload: any) {
+    const access_token = this.jwtService.sign(payload, {
+      algorithm: 'RS256',
+      expiresIn: '1h',
+    });
+    const refresh_token = this.jwtService.sign(payload, {
+      algorithm: 'RS256',
+      expiresIn: '7d',
+    });
+
+    return { access_token, refresh_token };
   }
 }

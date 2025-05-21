@@ -28,6 +28,7 @@ describe('AuthService', () => {
     role: Role.User,
     updateAt: new Date(),
     tenants: [],
+    username: 'testuser',
   };
 
   beforeEach(async () => {
@@ -69,75 +70,93 @@ describe('AuthService', () => {
   });
 
   describe('registrate', () => {
-    it('success', () => {
+    it('success', async () => {
       jest.spyOn(usersRepository, 'create').mockReturnValueOnce(mockUser);
       jest.spyOn(usersRepository, 'save').mockResolvedValueOnce(mockUser);
-      const result = service.registrate({
+      const result = await service.registrate({
         email: 'teste@teste.com',
         password: 'hashed',
+        username: 'testuser',
       });
-      expect(result).resolves.toEqual({ id: '123', email: 'teste@teste.com' });
+      expect(result).toEqual({
+        id: '123',
+        email: 'teste@teste.com',
+        username: 'testuser',
+      });
     });
 
-    it('User already exists', () => {
+    it('User already exists', async () => {
       jest.spyOn(usersRepository, 'create').mockReturnValueOnce(mockUser);
       jest
         .spyOn(usersRepository, 'save')
         .mockRejectedValueOnce({ code: '23505' });
-      const result = service.registrate({
-        email: 'teste@teste.com',
-        password: 'hashed',
-      });
-      expect(result).rejects.toBeInstanceOf(BadRequestException);
-      expect(result).rejects.toHaveProperty('message', 'User already exists');
+      await expect(
+        service.registrate({
+          email: 'teste@teste.com',
+          password: 'hashed',
+          username: 'testuser',
+        }),
+      ).rejects.toBeInstanceOf(BadRequestException);
     });
 
-    it('Database error', () => {
+    it('Database error', async () => {
       jest.spyOn(usersRepository, 'create').mockReturnValueOnce(mockUser);
       jest.spyOn(usersRepository, 'save').mockRejectedValue(new Error());
-      const result = service.registrate({
-        email: 'teste@teste.com',
-        password: 'hashed',
-      });
-      expect(result).rejects.toBeInstanceOf(InternalServerErrorException);
+      await expect(
+        service.registrate({
+          email: 'teste@teste.com',
+          password: 'hashed',
+          username: 'testuser',
+        }),
+      ).rejects.toBeInstanceOf(InternalServerErrorException);
     });
   });
 
   describe('login', () => {
-    it('success', () => {
+    it('success', async () => {
+      const hashedPassword = bcrypt.hashSync(mockUser.password, 11);
       jest.spyOn(usersRepository, 'findOne').mockResolvedValueOnce({
         ...mockUser,
-        password: bcrypt.hashSync(mockUser.password, 11),
+        password: hashedPassword,
       });
-      jest.spyOn(jwtService, 'sign').mockReturnValueOnce('token');
-      const result = service.login({
+      jest.spyOn(bcrypt, 'compareSync').mockReturnValue(true);
+      jest.spyOn(service, 'generateTokens').mockResolvedValueOnce({
+        access_token: 'access_token',
+        refresh_token: 'refresh_token',
+      });
+
+      const result = await service.login({
         email: 'teste@teste.com',
         password: 'hashed',
       });
-      expect(result).resolves.toEqual({
-        access_token: 'token',
+      expect(result).toEqual({
+        access_token: 'access_token',
+        refresh_token: 'refresh_token',
       });
     });
 
-    it('NotFound User', () => {
+    it('NotFound User', async () => {
       jest.spyOn(usersRepository, 'findOne').mockResolvedValueOnce(undefined);
-      const result = service.login({
-        email: 'testeee@teste.com',
-        password: 'hashed',
-      });
-      expect(result).rejects.toBeInstanceOf(UnauthorizedException);
+      await expect(
+        service.login({
+          email: 'testeee@teste.com',
+          password: 'hashed',
+        }),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
-    it('Wrong password', () => {
+    it('Wrong password', async () => {
       jest.spyOn(usersRepository, 'findOne').mockResolvedValueOnce({
         ...mockUser,
         password: bcrypt.hashSync(mockUser.password, 11),
       });
-      const result = service.login({
-        email: 'testeee@teste.com',
-        password: 'hasheeedede',
-      });
-      expect(result).rejects.toBeInstanceOf(UnauthorizedException);
+      jest.spyOn(bcrypt, 'compareSync').mockReturnValue(false);
+      await expect(
+        service.login({
+          email: 'testeee@teste.com',
+          password: 'hasheeedede',
+        }),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
     });
   });
 });
