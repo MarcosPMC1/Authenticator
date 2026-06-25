@@ -23,6 +23,7 @@ import { TenantModule } from './tenant/tenant.module';
         type: 'postgres',
         autoLoadEntities: true,
         logging: true,
+        synchronize: true
       }),
     }),
     JwtModule.register({

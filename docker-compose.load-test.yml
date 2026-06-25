@@ -1,0 +1,66 @@
+version: "3.9"
+
+services:
+  auth-api:
+    image: auth-api:prod
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env
+    restart: unless-stopped
+    volumes:
+      - ./key:/usr/keys/key 
+      - ./key.pub:/usr/keys/key.pub
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - auth-network
+    deploy:
+      replicas: 16
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.5"
+          memory: 256M
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "3000:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - auth-api
+    networks:
+      - auth-network
+
+  postgres:
+    container_name: auth-postgres
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+    volumes:
+      - auth-postgres-data:/var/lib/postgresql/data
+    networks:
+      - auth-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  auth-network:
+    driver: bridge
+
+volumes:
+  auth-postgres-data:
