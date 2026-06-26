@@ -34,7 +34,7 @@ describe('AuthGuard', () => {
       const mockRequest = { headers: {} } as Request;
       const context = { switchToHttp: () => ({ getRequest: () => mockRequest }) } as ExecutionContext;
 
-      await expect(authGuard.canActivate(context)).rejects.toThrowError(UnauthorizedException);
+      await expect(authGuard.canActivate(context)).rejects.toThrow(UnauthorizedException);
     });
 
     it('should throw UnauthorizedException if the token is invalid', async () => {
@@ -43,7 +43,7 @@ describe('AuthGuard', () => {
 
       jwtService.verifyAsync = jest.fn().mockRejectedValue(new Error('Invalid token'));
 
-      await expect(authGuard.canActivate(context)).rejects.toThrowError(UnauthorizedException);
+      await expect(authGuard.canActivate(context)).rejects.toThrow(UnauthorizedException);
     });
 
     it('should add the user to the request if the token is valid', async () => {

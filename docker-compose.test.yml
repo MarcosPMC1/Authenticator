@@ -34,9 +34,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_DB: "${POSTGRES_DATABASE}"
-      PG_DATA: /var/lib/postgresql/data
     volumes:
-      - auth-postgres-data:/var/lib/postgresql/data
+      - auth-postgres-data:/var/lib/postgresql
     networks:
       - auth-e2e-network
     healthcheck:

@@ -5,6 +5,12 @@ import { Users } from '../users/entities/users.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+
+jest.mock('bcrypt', () => ({
+  __esModule: true,
+  ...jest.requireActual('bcrypt'),
+  compareSync: jest.fn(),
+}));
 import {
   BadRequestException,
   InternalServerErrorException,
